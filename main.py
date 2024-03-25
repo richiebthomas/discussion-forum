@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -98,8 +98,10 @@ class Topic(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id =db.Column(db.Integer)
+    user_name =db.Column(db.String)
     text = db.Column(db.String, unique=True, nullable=False)
     topicId = db.Column(db.String)
+    color=db.Column(db.String)
 
 with app.app_context():
     db.create_all()
@@ -139,18 +141,48 @@ def dashboard():
 
 
 
-@app.route("/topic/<int:id>",methods=["GET","POST"])
+@app.route("/topic/<int:id>", methods=["GET", "POST"])
 def topic(id):
+    topic = Topic.query.get_or_404(id)
     if request.method == "POST":
+        user_id = session['user_id']
+        user = User.query.get(user_id)
+        if user:
+            user_name = user.username
+            color = user.color
+            comment = Comment(
+                text=request.form["text"],
+                topicId=id,
+                user_id=user_id,
+                color=color,
+                user_name=user_name
+            )
+            db.session.add(comment)
+            db.session.commit()
+    user_id = session['user_id']
+    comments = Comment.query.filter_by(topicId=id).all()
 
-        comment = Comment(
-            # Add a new comment  
-            text=request.form["text"],
-            topicId=request.form["topicId"]
-        )
-        db.session.add(comment)
-        db.session.commit()
-  
-    return render_template("user/detail.html")
+    return render_template("topic.html", topic=topic, comments=comments,user_id=user_id)
 
-app.run(debug=True)
+@app.route("/delete-topic/<int:id>", methods=["DELETE"])
+def delete_topic(id):
+    # Check if the user is authenticated
+    if 'user_id' not in session:
+        return jsonify({"message": "Unauthorized"}), 401
+
+    # Get the ID of the current user
+    current_user_id = session['user_id']
+
+    # Query the topic to check if it exists and if it belongs to the current user
+    topic = Topic.query.filter_by(id=id, user_id=current_user_id).first()
+    if not topic:
+        return jsonify({"message": "Topic not found or unauthorized"}), 404
+
+    # Delete the topic
+    db.session.delete(topic)
+    db.session.commit()
+
+    return jsonify({"message": "Topic deleted successfully"}), 200
+
+
+app.run(host='0.0.0.0', port=8000)
