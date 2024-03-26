@@ -112,7 +112,7 @@ from flask import session
 
 from flask import session
 
-@app.route("/dashboard", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
