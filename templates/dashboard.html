@@ -34,29 +34,29 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">FCRIT Discussion</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-            </ul>
-            <form action="{{ url_for('logout') }}" method="post">
-                <button type="submit" class="btn btn-danger">Logout</button>
-            </form>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">FCRIT Discussion</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('dashboard') }}">Home</a>
+                    </li>
+                </ul>
+                <form action="{{ url_for('logout') }}" method="post">
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
+            </div>
         </div>
-    </div>
-</nav>
-
+    </nav>
+    
 <div class="container">
     <div class="add-topic-form" id="addTopicForm">
         <h1 class="fs-5">Add a topic</h1>
-        <form action="/dashboard" method="post">
+        <form action="/" method="post">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input type="text" class="form-control" id="title" name="title" aria-describedby="emailHelp">
@@ -75,7 +75,7 @@
         <h6 class="border-bottom pb-2 mb-0">Browse the topics</h6>
         {% for item in topics %}
             <div class="d-flex text-body-secondary pt-3">
-                <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="{{ item.color }}"></rect><text x="50%" y="50%" fill="#007bff" dy=".3em"></text></svg>
+                <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 32x32" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="{{ item.color }}"></rect><text x="15%" y="50%" fill="#007bff" dy=".3em">👤</text></svg>
                 <p class="pb-3 mb-0 small lh-sm border-bottom">
                     <strong class="d-block text-gray-dark">@{{ item.user_name }}</strong>
                     <strong class="d-block text-gray-dark"><a href="/topic/{{item.id}}">{{ item.title }}</a></strong>
